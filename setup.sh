@@ -1,29 +1,18 @@
-echo "Starting process..."
+#!/bin/bash
+PORT=$1
 
-if [ "$#" -ne 1 ]; then
-  echo "Parameter required PORT"
-  exit 1
+if [ -z "$PORT" ]; then
+    echo "Usage: $0 <PORT>"
+    exit 1
 fi
 
-PORT="$1"
-
-if ! [[ "$PORT" =~ ^[0-9]+$ ]]; then
-  echo "PORT must be a non-negative integer."
-  exit 1
+if [ ! -d "venv" ]; then
+    python3 -m venv venv
 fi
 
-PIDS=$(timeout 2s lsof -ti ":$PORT")
-if [ -n "$PIDS" ]; then
-  kill -9 $PIDS
-fi
+source venv/bin/activate
 
-if ! git pull; then
-  echo "git pull failed"
-  exit 1
-fi
-
-python3 -m venv .venv
-source .venv/bin/activate
+pip install --upgrade pip
 pip install -r requirements.txt
 
-gunicorn -b ":$PORT" app:app
+gunicorn --workers 3 --bind unix:/home/nullsec0x/.recipemaster.nullsec0x.hackclub.app.webserver.sock app:app
