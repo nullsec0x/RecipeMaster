@@ -1,17 +1,29 @@
-#!/bin/bash
-PORT=$1
+echo "Starting process..."
 
-if [ ! -d "venv" ]; then
-    python3 -m venv venv
+if [ "$#" -ne 1 ]; then
+  echo "Parameter required PORT"
+  exit 1
 fi
 
-source venv/bin/activate
+PORT="$1"
 
-pip install --upgrade pip
+if ! [[ "$PORT" =~ ^[0-9]+$ ]]; then
+  echo "PORT must be a non-negative integer."
+  exit 1
+fi
+
+PIDS=$(timeout 2s lsof -ti ":$PORT")
+if [ -n "$PIDS" ]; then
+  kill -9 $PIDS
+fi
+
+if ! git pull; then
+  echo "git pull failed"
+  exit 1
+fi
+
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 
-export FLASK_APP=app.py  
-export FLASK_RUN_HOST=0.0.0.0
-export FLASK_RUN_PORT=$PORT
-
-flask run
+gunicorn -b ":$PORT" app:app
