@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <img src="{{ recipe.image }}" class="card-img-top" alt="{{ recipe.name }}">
+        <div class="card-body">
+            <h1 class="card-title">{{ recipe.name }}</h1>
+            <div class="mb-3">
+                <span class="badge bg-primary">{{ recipe.category }}</span>
+                <span class="badge bg-secondary ms-2">{{ recipe.area }}</span>
+            </div>
+            
+            <h3>Instructions:</h3>
+            <div class="instructions p-3 bg-light rounded mb-4">
+                {{ recipe.instructions }}
+            </div>
+            
+            <a href="{{ url_for('favorites') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Favorites
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

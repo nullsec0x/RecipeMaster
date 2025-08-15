@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <h2 class="mb-4">Your Favorite Recipes</h2>
+        
+        {% if recipes %}
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for recipe in recipes %}
+                <div class="col">
+                    <div class="card h-100">
+                        <a href="{{ url_for('view_recipe', id=recipe.id) }}">
+                            <img src="{{ recipe.image }}" class="card-img-top recipe-img">
+                        </a>
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{{ url_for('view_recipe', id=recipe.id) }}" class="text-decoration-none">
+                                    {{ recipe.name }}
+                                </a>
+                            </h5>
+                            <form action="{{ url_for('delete', id=recipe.id) }}" method="POST" class="mt-2">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+        <div class="alert alert-info">
+            You haven't saved any recipes yet. 
+            <a href="{{ url_for('home') }}" class="alert-link">Find some recipes</a> to save!
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
